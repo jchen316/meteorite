@@ -556,15 +556,19 @@ export default function CustomTable({
                     >
                       {row.name}
                     </TableCell>
-                    <TableCell align="center">{row.id}</TableCell>
-                    <TableCell align="center">{row.nametype}</TableCell>
-                    <TableCell align="center">{row.recclass}</TableCell>
-                    <TableCell align="center">{row.mass}</TableCell>
-                    <TableCell align="center">{row.fall}</TableCell>
-                    <TableCell align="center">{row.year}</TableCell>
-                    <TableCell align="center">{row.reclat}</TableCell>
-                    <TableCell align="center">{row.reclong}</TableCell>
-                    <TableCell align="center">
+                    <TableCell align="right">{row.id}</TableCell>
+                    <TableCell align="right">{row.nametype}</TableCell>
+                    <TableCell align="right">{row.recclass}</TableCell>
+                    <TableCell align="right">{row.mass}</TableCell>
+                    <TableCell align="right">{row.fall}</TableCell>
+                    <TableCell align="right">{row.year?.slice(0, 4)}</TableCell>
+                    <TableCell align="right">
+                      {row.reclat?.slice(0, 5)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {row.reclong?.slice(0, 5)}
+                    </TableCell>
+                    <TableCell align="right">
                       {row.geolocation?.type
                         ? row.geolocation?.coordinates[0] +
                           "," +
