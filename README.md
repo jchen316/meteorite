@@ -2,16 +2,12 @@
 
 To get Started:
 
-npm install
-
-npm run dev
-
-Visit http://localhost:5173/
+1. npm install
+2. npm run dev
+3. Visit http://localhost:5173/
 
 To run Storybook:
-
-npm run storybook
+1. npm run storybook
 
 To Run Tests:
-
-npm run test
+1. npm run test
