@@ -1,0 +1,9 @@
+
+.count {
+  font-size: pxToRem(50px);
+  font-weight: 450;
+  -webkit-text-stroke: 0.2px blue($color: #0d84a5);
+  color: #f61919;
+  font-style: italic;
+  user-select: none;
+}
