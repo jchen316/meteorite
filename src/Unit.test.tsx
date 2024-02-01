@@ -1,6 +1,6 @@
 import { test, expect } from "vitest";
 
-function factorial(n) {
+function factorial(n: number): number {
   if (n === 0) {
     return 1;
   }

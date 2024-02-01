@@ -16,6 +16,11 @@ interface TabPanelProps {
   value: number;
 }
 
+interface ThemeContextType {
+  darkMode: boolean;
+  toggleDarkMode: () => void;
+}
+
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
@@ -29,7 +34,7 @@ function CustomTabPanel(props: TabPanelProps) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <Typography component="div">{children}</Typography>
         </Box>
       )}
     </div>
@@ -61,7 +66,8 @@ export default function BasicTabs() {
     setValue(newValue);
   };
 
-  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+  const { darkMode, toggleDarkMode } =
+    useContext<ThemeContextType>(ThemeContext);
 
   useEffect(() => {
     setFavorites(localData ? JSON.parse(localData) : []);
@@ -92,7 +98,12 @@ export default function BasicTabs() {
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange} aria-label="tabs">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="tabs"
+          variant="scrollable"
+        >
           <Tab label="All Meteorites" {...a11yProps(0)} />
           <Tab label="Favorites" {...a11yProps(1)} />
           <Tab label="Fun Challenge" {...a11yProps(2)} />
@@ -117,12 +128,14 @@ export default function BasicTabs() {
       <CustomTabPanel value={value} index={2}>
         <h1> Capture the Flag Challenge</h1>
         <div>
-          https://tns4lpgmziiypnxxzel5ss5nyu0nftol.lambda-url.us-east-1.on.aws/challenge{" "}
+          Go to the Link below and Traverse the Dom tree to find the hidden code{" "}
         </div>
-        <div> Traverse the Dom tree to find the hidden code!</div>
+        <div>
+          https://tns4lpgmziiypnxxzel5ss5nyu0nftol.lambda-url.us-east-1.on.aws/challenge
+        </div>
         <br />
         <div>
-          Pattern of DOM Tree code
+          Pattern of the DOM Tree code
           <br />
           data-class="23*" <br />
           div data-tag="*93" <br />
@@ -131,7 +144,7 @@ export default function BasicTabs() {
           <br />
         </div>
         <br />
-        useContext example
+        Unrelated useContext example
         {darkMode ? <div> DarkModeOn </div> : <div> DarkModeOff </div>}
         <Button onClick={toggleDarkMode}>Click me</Button>
       </CustomTabPanel>

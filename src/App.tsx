@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 function App() {
   const queryClient = new QueryClient();
 
+  // working example at https://codesandbox.io/p/sandbox/wizardly-edison-6p7kxl?file=%2Fsrc%2FApp.js%3A8%2C34
   // useEffect(() => {
   //   fetch("/dataSet")
   //     .then((res) => res.json())

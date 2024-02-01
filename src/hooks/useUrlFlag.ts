@@ -55,7 +55,7 @@ export default function useUrlFlag() {
 
         setUrlFlag(url);
       })
-      .catch((error) => {
+      .catch(() => {
         setError(true);
       })
       .finally(() => {

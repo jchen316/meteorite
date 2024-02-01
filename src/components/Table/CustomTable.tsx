@@ -148,7 +148,7 @@ const headCells: readonly HeadCell[] = [
     id: "mass",
     numeric: true,
     disablePadding: false,
-    label: "Mass",
+    label: "Mass (g)",
   },
   {
     id: "fall",
@@ -251,12 +251,20 @@ interface EnhancedTableToolbarProps {
   selected: readonly number[];
   favorites: Data[];
   setFavorites: unknown;
+  setSelected: unknown;
   dataSet: Data[] | [];
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected, selected, favorites, setFavorites, dataSet, tabNumber } =
-    props;
+  const {
+    numSelected,
+    selected,
+    favorites,
+    setFavorites,
+    dataSet,
+    tabNumber,
+    setSelected,
+  } = props;
 
   // 3. The ability to save a list of their favorite meteorites that persists across browser sessions and tabs.
   // localStorage for persisting across browser tab/sessosion
@@ -275,8 +283,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         }
       });
     });
-    // localStorage.setItem("favorites", JSON.stringify(dataSet));
-    console.log(dataSet, "what am i");
+    setSelected([]);
     setItem("favorites", dataSet);
     setFavorites(dataSet);
   };
@@ -369,11 +376,12 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         )
       ) : (
         // 4. The ability to filter the dataset by the fall field. TODO
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+        // <Tooltip title="Filter list">
+        //   <IconButton>
+        //     <FilterListIcon />
+        //   </IconButton>
+        // </Tooltip>
+        <> </>
       )}
     </Toolbar>
   );
@@ -499,6 +507,7 @@ export default function CustomTable({
           selected={selected}
           favorites={favorites}
           setFavorites={setFavorites}
+          setSelected={setSelected}
           dataSet={dataSet}
           tabNumber={tabNumber}
         />
@@ -507,6 +516,10 @@ export default function CustomTable({
           onChange={(newValue) => {
             setTextFieldValue(newValue);
             handleSearch(newValue);
+          }}
+          onCancelResearch={() => {
+            setTextFieldValue("");
+            setDataSet(originalDataSet);
           }}
         />
         <TableContainer>
@@ -570,9 +583,11 @@ export default function CustomTable({
                     </TableCell>
                     <TableCell align="right">
                       {row.geolocation?.type
-                        ? row.geolocation?.coordinates[0] +
-                          "," +
-                          row.geolocation?.coordinates[1]
+                        ? "(" +
+                          row.geolocation?.coordinates[0] +
+                          "°, " +
+                          row.geolocation?.coordinates[1] +
+                          "°)"
                         : "N/A"}
                     </TableCell>
                   </TableRow>
