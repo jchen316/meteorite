@@ -5,7 +5,6 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CustomTable from "../Table/CustomTable";
 import CTF from "../CTF/CTF";
-// import useDebounce from "../../hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
 import { ThemeContext } from "../../context/ThemeContext";
 import { Button } from "@mui/material";
@@ -14,11 +13,6 @@ interface TabPanelProps {
   children?: ReactNode;
   index: number;
   value: number;
-}
-
-interface ThemeContextType {
-  darkMode: boolean;
-  toggleDarkMode: () => void;
 }
 
 function CustomTabPanel(props: TabPanelProps) {
@@ -62,17 +56,18 @@ export default function BasicTabs() {
   const [value, setValue] = useState(0);
   const [favorites, setFavorites] = useState([]);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  const { darkMode, toggleDarkMode } =
-    useContext<ThemeContextType>(ThemeContext);
+  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
 
   useEffect(() => {
     setFavorites(localData ? JSON.parse(localData) : []);
   }, [localData]);
 
+  // things you can do with ReactQuery - caching, pagination, refetching
+  // ReactyQuery is a data fetching library for React
   const { data, isLoading, error } = useQuery({
     queryKey: ["dataSet"],
     queryFn: fetchDataset,
@@ -108,6 +103,7 @@ export default function BasicTabs() {
           <Tab label="Favorites" {...a11yProps(1)} />
           <Tab label="Fun Challenge" {...a11yProps(2)} />
           <Tab label="CTF Answer" {...a11yProps(3)} />
+          <Tab label="Just for Fun Qs" {...a11yProps(3)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -150,6 +146,29 @@ export default function BasicTabs() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
         <CTF />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={4}>
+        <pre>
+          {`
+          What Will the output be?
+
+          const race = () => {
+            console.log('start race');
+
+            setTimeout(()=> console.log('Ricky Bobby finishes!'), 0);
+
+            new Promise((resolve, reject) =>
+              resolve('Jean Finishes!')
+            ).then(resolve => console.log(resolve))
+
+            console.log('Cal finishes!')
+          }
+
+          race();
+
+          https://replit.com/@jchen316/MediocreFirstCopyleft#index.js Find out here          
+          `}
+        </pre>
       </CustomTabPanel>
     </Box>
   );

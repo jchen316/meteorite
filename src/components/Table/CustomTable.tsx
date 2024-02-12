@@ -19,7 +19,12 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import FilterListIcon from "@mui/icons-material/FilterList";
+// import FilterListIcon from "@mui/icons-material/FilterList";
+import {
+  roundToThreeDecimalsIfDecimal,
+  stableSort,
+  getComparator,
+} from "./CustomTableHelper";
 import { visuallyHidden } from "@mui/utils";
 import { setItem } from "../../library/localStorage";
 
@@ -33,11 +38,11 @@ interface Data {
   name: string;
   nametype: string;
   recclass: string;
-  mass: number;
+  mass: string;
   fall: string;
-  year: Date;
-  reclat: number;
-  reclong: number;
+  year: string;
+  reclat: string;
+  reclong: string;
   geolocation: {
     type: string;
     coordinates: [number, number];
@@ -49,11 +54,11 @@ function createData(
   id: number,
   nametype: string,
   recclass: string,
-  mass: number,
+  mass: string,
   fall: string,
-  year: Date,
-  reclat: number,
-  reclong: number,
+  year: string,
+  reclat: string,
+  reclong: string,
   geolocation: {
     type: string;
     coordinates: [number, number];
@@ -73,51 +78,14 @@ function createData(
   };
 }
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-type Order = "asc" | "desc";
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
-) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function stableSort<T>(
-  array: readonly T[],
-  comparator: (a: T, b: T) => number
-) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
 interface HeadCell {
   disablePadding: boolean;
   id: keyof Data;
   label: string;
   numeric: boolean;
 }
+
+type Order = "asc" | "desc";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -250,8 +218,8 @@ interface EnhancedTableToolbarProps {
   tabNumber: number;
   selected: readonly number[];
   favorites: Data[];
-  setFavorites: unknown;
-  setSelected: unknown;
+  setFavorites: (selected: Data[] | []) => void;
+  setSelected: (selected: Data[] | []) => void;
   dataSet: Data[] | [];
 }
 
@@ -398,11 +366,11 @@ export default function CustomTable({
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [dataSet, setDataSet] = useState([]);
-  const [originalDataSet, setOriginalDataSet] = useState([]);
+  const [dataSet, setDataSet] = useState<Data[]>([]);
+  const [originalDataSet, setOriginalDataSet] = useState<Data[]>([]);
 
   const handleRequestSort = (
-    event: MouseEvent<unknown>,
+    _event: MouseEvent<unknown>,
     property: keyof Data
   ) => {
     const isAsc = orderBy === property && order === "asc";
@@ -412,7 +380,7 @@ export default function CustomTable({
 
   const handleSelectAllClick = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = dataSet.map((n) => n.id);
+      const newSelected = dataSet.map((n: Data) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -420,7 +388,7 @@ export default function CustomTable({
   };
 
   useEffect(() => {
-    const rows = data.map((item: Data) => {
+    const rows: Data[] = data.map((item: Data) => {
       return createData(
         item.name,
         item.id,
@@ -438,7 +406,7 @@ export default function CustomTable({
     setOriginalDataSet(rows);
   }, [data]);
 
-  const handleClick = (event: MouseEvent<unknown>, id: number) => {
+  const handleClick = (_event: MouseEvent<unknown>, id: number) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly number[] = [];
 
@@ -457,7 +425,7 @@ export default function CustomTable({
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -537,7 +505,7 @@ export default function CustomTable({
               rowCount={dataSet.length}
             />
             <TableBody>
-              {visibleRows.map((row, index) => {
+              {visibleRows.map((row: Data, index: number) => {
                 const isItemSelected = isSelected(row.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -566,13 +534,16 @@ export default function CustomTable({
                       id={labelId}
                       scope="row"
                       padding="none"
+                      width="7%"
                     >
                       {row.name}
                     </TableCell>
                     <TableCell align="right">{row.id}</TableCell>
                     <TableCell align="right">{row.nametype}</TableCell>
                     <TableCell align="right">{row.recclass}</TableCell>
-                    <TableCell align="right">{row.mass}</TableCell>
+                    <TableCell align="right">
+                      {roundToThreeDecimalsIfDecimal(String(row.mass))}
+                    </TableCell>
                     <TableCell align="right">{row.fall}</TableCell>
                     <TableCell align="right">{row.year?.slice(0, 4)}</TableCell>
                     <TableCell align="right">
@@ -584,9 +555,13 @@ export default function CustomTable({
                     <TableCell align="right">
                       {row.geolocation?.type
                         ? "(" +
-                          row.geolocation?.coordinates[0] +
+                          roundToThreeDecimalsIfDecimal(
+                            String(row.geolocation?.coordinates[0])
+                          ) +
                           "°, " +
-                          row.geolocation?.coordinates[1] +
+                          roundToThreeDecimalsIfDecimal(
+                            String(row.geolocation?.coordinates[1])
+                          ) +
                           "°)"
                         : "N/A"}
                     </TableCell>

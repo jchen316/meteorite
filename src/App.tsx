@@ -12,6 +12,7 @@ function App() {
   const queryClient = new QueryClient();
 
   // working example at https://codesandbox.io/p/sandbox/wizardly-edison-6p7kxl?file=%2Fsrc%2FApp.js%3A8%2C34
+  // json-server is another npm package that can be used to mock a server
   // useEffect(() => {
   //   fetch("/dataSet")
   //     .then((res) => res.json())
