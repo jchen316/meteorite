@@ -484,10 +484,12 @@ export default function CustomTable({
           onChange={(newValue) => {
             setTextFieldValue(newValue);
             handleSearch(newValue);
+            setPage(0);
           }}
           onCancelResearch={() => {
             setTextFieldValue("");
             setDataSet(originalDataSet);
+            setPage(0);
           }}
         />
         <TableContainer>
